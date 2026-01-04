@@ -1,11 +1,11 @@
 {
 	"id": "remember-every-pay",
 	"name": "Remember Every Pay ",
-	"version": "1.0.0",
+	"version": "beta-1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "To record any money your pay and make a summary",
 	"author": "chinaqianb",
 	"authorUrl": "https://github.com/chinaqianb",
-	"fundingUrl": "https://github.com/chinaqianb/remember-every-pay",
+	"fundingUrl": "https://github.com/chinaqianb/obsidian-Remember-every-pay",
 	"isDesktopOnly": false
 }
