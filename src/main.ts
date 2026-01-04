@@ -1,7 +1,17 @@
-import {App, Editor, MarkdownView, Modal, Notice, Plugin} from 'obsidian';
-import {DEFAULT_SETTINGS, MyPluginSettings, SampleSettingTab} from "./settings";
+import {App, Editor, MarkdownView, Menu, Modal, Notice, Plugin} from 'obsidian';
+import {DEFAULT_SETTINGS, MyPluginSettings, MySetting} from "./settings";
+import ChooseModel from "./modal/addRecord/choosemodel";
+import RecordDataIo from "./filerw/recorddataio";
+import RandomChoose from "./modal/random/randomchoose";
+import RandomPage from "./modal/random/startrandompage";
+import FindOrWriteData from "./modal/findRecord/FindOrWirteData";
+import ChooseNeedFindDate from "./modal/findRecord/ChooseNeedFindDate";
+import ChooseRecordData from "./modal/deleteRecord/chooseRecordData";
+import ChooseYear from "./modal/chooseyear";
+import SummaryChooseDate from "./modal/summary/SummaryChooseDate";
+import SummarySetting from "./modal/summary/SummarySetting";
 
-// Remember to rename these classes and interfaces!
+
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -9,61 +19,100 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// This creates an icon in the left ribbon.
-		this.addRibbonIcon('dice', 'Sample', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
+
+		this.addRibbonIcon('calendar-fold', '记录', (eve) => {
+			const menu=new Menu()
+			menu.addItem((item)=>{
+				item.setTitle('随机选择')
+				item.setIcon('square-mouse-pointer')
+				item.onClick(()=>{
+				// new RandomChoose(this.app).open()
+					new RandomChoose(this.app,this.settings.random_choose_zu,this.settings.random_choose_time_and_n).open()
+				})
+			})
+			menu.addItem((item)=>{
+				item.setTitle("添加记录")
+					.setIcon('plus')
+					.onClick(()=>{
+
+					new ChooseModel(this.app,this).open();
+					})
+			})
+			menu.addItem((item)=>{
+				item.setTitle("每日金额统计")
+					.setIcon("calendar-check-2")
+					.onClick(()=>{
+						new ChooseYear(this.app,this,async (value)=>{
+							new SummaryChooseDate(this.app,this,await new RecordDataIo(this.app, this).getAllDate(value),value).open()
+						}).open()
+					})
+			})
+			menu.addItem((item)=>{
+				item.setTitle("删除记录")
+					.setIcon("trash-2")
+					.onClick(async ()=>{
+						const io=new RecordDataIo(this.app,this)
+						new ChooseYear(this.app,this,async (value)=>{
+						new ChooseRecordData(this.app,this,await io.getAllDate(value),value).open()}).open()
+					})
+			})
+			menu.addItem((item)=>{
+				item.setTitle("寻找和修改记录")
+					.setIcon('calendar')
+					.onClick(async ()=>{
+						const io=new RecordDataIo(this.app,this)
+						new ChooseYear(this.app,this,async (value)=>{
+						new ChooseNeedFindDate(this.app,this,await io.getAllDate(value),value).open()}).open()
+					})
+			})
+			menu.addItem((item)=>{
+				item.setTitle("汇总这个月")
+					.setIcon('chart-line')
+					.onClick(async ()=>{
+						new ChooseYear(this.app,this,async (value)=>{
+							new SummarySetting(this.app,this,value)
+							.open()
+						}).open()
+
+					})
+			})
+			menu.showAtMouseEvent(eve)
+
+			// new Notice('This is a notice!');
 		});
 
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status bar text');
-
-		// This adds a simple command that can be triggered anywhere
+		// // This adds a status bar item to the bottom of the app. Does not work on mobile apps.
+		// 		// const statusBarItemEl = this.addStatusBarItem();
+		// 		// statusBarItemEl.setText('Status bar text');
+		// 		//
+		// 		// // This adds a simple command that can be triggered anywhere
 		this.addCommand({
-			id: 'open-modal-simple',
-			name: 'Open modal (simple)',
+			id: 'create_this_month',
+			name: '创建这个月份',
 			callback: () => {
-				new SampleModal(this.app).open();
+				new RecordDataIo(this.app, this).createNewFolder()
 			}
 		});
-		// This adds an editor command that can perform some operation on the current editor instance
+
 		this.addCommand({
-			id: 'replace-selected',
-			name: 'Replace selected content',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				editor.replaceSelection('Sample editor command');
+			id: 'read_this_month',
+			name: '读取这个月',
+			callback:()=>{
+				new RecordDataIo(this.app,this).readNowDataMd()
 			}
 		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
+
 		this.addCommand({
-			id: 'open-modal-complex',
-			name: 'Open modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
-
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
-				return false;
+			id:'test-the-use',
+			name:'测试这个功能',
+			callback:()=>{
+				// new RecordDataIo(this.app,this).getAllFileList()
 			}
-		});
+		})
 
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new MySetting(this.app, this));
 
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			new Notice("Click");
-		});
+
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
@@ -80,20 +129,6 @@ export default class MyPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
 }
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
-
-	onOpen() {
-		let {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
-}
