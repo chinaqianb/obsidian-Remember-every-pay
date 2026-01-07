@@ -134,8 +134,12 @@ export default class RecordDataIo {
 		return con.match(patter)||[]
 	}
 	//下面这两个函数有问题
-	dataAppendTo(is:boolean,con:string,today:string,in_content:string,data:string):string{
-		const index=(<number>this.jumpToSome(con,`## ${today}`))+in_content.length+1
+	dataAppendTo(is:boolean,con:string,today:string,in_content:string,data:string,extra:number=0):string{
+		 let index=(<number>this.jumpToSome(con,`## ${today}`))+in_content.length+1
+		 if (extra!=0){
+			  index=(<number>this.jumpToSome(con,`## ${today}`))+in_content.length-extra
+		 }
+
 		 if (is){
 			 //换行输出
 			return this.addConOnMiddleByIndex(con,index,`\n${data}`)
@@ -173,11 +177,17 @@ export default class RecordDataIo {
 			const today_data=<string>block.filter(i=>i.includes(today)).first()//一个block里面的数据
 			const par= /##\s*\d{4}-\d{2}-\d{2}\s*\n([\s\S]*?)\n+---/;
 			const mat=today_data.match(par)
-			const in_content=mat?.[1];//中间的数据
-			if (/\S/.test(<string>in_content)){
+			const in_content=mat?.[1] as string;//中间的数据
+			if (/\S/.test(in_content)){
 				//不是第一个
-
-				await this.writeNowDataMd(this.dataAppendTo(this.plugin.settings.every_data_hang_out,con,today,<string>in_content,data))
+				if (in_content.includes("总计")){
+					//有总计的处理情况
+					const summary_mat=in_content.match(/(总计:\d+(?:\.\d+)?)/)
+					const summary_text=summary_mat?.[1] as string
+					await this.writeNowDataMd(this.dataAppendTo(this.plugin.settings.every_data_hang_out,con,today,in_content,data,summary_text.length))
+					return;
+				}
+				await this.writeNowDataMd(this.dataAppendTo(this.plugin.settings.every_data_hang_out,con,today,in_content,data))
 			}else {
 				//第一个
 
@@ -381,10 +391,17 @@ export default class RecordDataIo {
 		let summary_str='\n';
 		for (const [key,value]of collect_map){
 			if (!zero_output)if (value===0){collect_map.delete(key);continue;}
-			summary_str=summary_str+`${key}:${value}\n`
+			summary_str=summary_str+`${key}:${this.putUpNum(value)}\n`
 		}
 
-		if (all_pay)summary_str=summary_str+`总金额:${await this.summaryAllPay(plugin, path)}\n`
+		if (all_pay)summary_str=summary_str+`总金额:${this.putUpNum(await this.summaryAllPay(plugin, path))}\n`
+		const summary_m_mat=/# summary\s*\n([\s\S]*?)\n+## chart/
+		const s_m_text=con.match(summary_m_mat)
+		if (s_m_text&&/\S/.test(s_m_text[1]as string)){
+
+			await this.writeThatDateMd(this.addNewConOnMiddle(con.replace(<string>s_m_text[1],''),"# summary",summary_str),path)
+			return collect_map
+		}
 		await this.writeThatDateMd(this.addNewConOnMiddle(con,"# summary",summary_str),path)
 
 		return collect_map
@@ -418,7 +435,9 @@ export default class RecordDataIo {
 
 			sum+=v
 		}
+
 		const block=this.dataToBlock(con)
+		const back_data=this.putUpNum(sum)
 		if (block.some(i=>i.includes(date))) {
 
 			const today_data = <string>block.filter(i => i.includes(date)).first()//一个block里面的数据
@@ -427,20 +446,20 @@ export default class RecordDataIo {
 			const in_content = mat?.[1]as string;//中间的数据
 			if (in_content.includes("总计:")){
 
-				await this.writeThatDateMd(con.replace(today_data,today_data.replace(/总计:\d+\n/,`总计:${sum}\n`)),path)
+				await this.writeThatDateMd(con.replace(today_data,today_data.replace(/总计:\d+(?:\.\d+)?\n/,`总计:${back_data}\n`)),path)
 				return;
 			}
-				await this.writeThatDateMd(this.dataAppendTo(true, con, date, in_content, `总计:${sum}\n`),path)
+				await this.writeThatDateMd(this.dataAppendTo(true, con, date, in_content, `总计:${back_data}\n`),path)
 		}
 	}
-	async addCharts(type:Map<string, number>,path:string){
+	async addCharts(type:Map<string, number>,path:string,chart_type:string='radar'){
 		 let type_list=Array.from(type.keys())
 		let pay_list=Array.from(type.values())
 		const type_out=`[${type_list.join(',')}]`
 		const pay_out=`[${pay_list.join(',')}]`
 		 const chart=`
 \`\`\`chart
-type: radar
+type: ${chart_type}
 labels: ${type_out}
 series:
  - title: 花费
@@ -455,7 +474,26 @@ bestFitTitle: undefined
 bestFitNumber: 0
 \`\`\``
 		const con=await this.readThatDateMd(path) as string;
+		 const chart_mat=/## chart\s*\n(```[\s\S]*?```)/
+		const chart_m_text=con.match(chart_mat)
+		 if (chart_m_text&&/\S/.test(chart_m_text[1]as string)){
+
+			 await this.writeThatDateMd(this.addNewConOnMiddle(con.replace(<string>chart_m_text[1],''),"## chart",'\n'+chart),path);
+			 return;
+		 }
 		await this.writeThatDateMd(this.addNewConOnMiddle(con,"## chart",'\n'+chart),path);
 	}
+	putUpNum(num:number):string{
+		// 检查是否为整数（处理浮点数精度问题）
+		const isInteger = Math.abs(num - Math.round(num)) < 0.000001;
+
+		if (isInteger) {
+			return Math.round(num).toString();
+		} else {
+			// 使用 toFixed(2) 保留两位小数
+			return num.toFixed(2);
+		}
+	}
 }
+
 
