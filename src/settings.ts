@@ -10,6 +10,8 @@ export interface MyPluginSettings {
 	data_zero_output:boolean
 	random_choose_zu:Record<string,Record<string,number>>
 	random_choose_time_and_n:[number,number]
+	record_zu:Record<string, string[]>
+	open_zu_output:boolean
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -19,7 +21,9 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
 	data_sum:true,
 	random_choose_zu:{},
 	random_choose_time_and_n:[500,4],
-	data_zero_output:false
+	data_zero_output:false,
+	record_zu:{},
+	open_zu_output:false
 }
 
 export class MySetting extends PluginSettingTab {
@@ -38,7 +42,6 @@ export class MySetting extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("类型")
 			.setHeading()
-
 		new Setting(containerEl)
 			.setName('添加类型')
 			.setDesc('添加新的一个类型')
@@ -62,6 +65,7 @@ export class MySetting extends PluginSettingTab {
 					})
 
 		})
+		//已有类型设置
 		new Setting(containerEl)
 			.setName("已有的类型")
 			.setHeading()
@@ -83,7 +87,44 @@ export class MySetting extends PluginSettingTab {
 			this.plugin.settings.my_record.remove(i)
 			 await this.plugin.saveSettings()
 			this.display()
+		},
+			async (child)=>{
+			if (this.plugin.settings.record_zu[now_choose_group]?.includes(child)){
+				new Notice("该类型已存在!!!")
+				return;
+			}
+			this.plugin.settings.record_zu[now_choose_group]?.push(child);
+			this.plugin.saveSettings();
+			this.display();
+			})
+		//设置组设置
+		new Setting(containerEl)
+			.setName("类型组")
+			.setHeading()
+		let add_new_zu=''
+		new Setting(containerEl)
+			.setName("添加新的组")
+			.addText((text)=> {
+				text.setPlaceholder('输入类型')
+					.onChange(text => {
+						add_new_zu = text
+					})
+			}).addExtraButton(btn=>{
+				btn.setIcon('plus')
+					.onClick(async ()=>{
+						this.plugin.settings.record_zu[add_new_zu]=[]
+						await this.plugin.saveSettings()
+						this.display()
+					})
 		})
+		let now_choose_group=''
+		for (const [k,v] of Object.entries(this.plugin.settings.record_zu)){
+			render_oneGroup(containerEl,k,v,(e)=>{now_choose_group=e},(name)=>{delete this.plugin.settings.record_zu[name];this.plugin.saveSettings();this.display()}
+			,(n, child)=>{this.plugin.settings.record_zu[n]?.remove(child);this.plugin.saveSettings();this.display()})
+		}
+
+
+				//文件操作设置
 		new Setting(containerEl)
 			.setName("文件操作")
 			.setHeading()
@@ -151,6 +192,16 @@ export class MySetting extends PluginSettingTab {
 						this.plugin.saveSettings()
 					})
 			})
+		new Setting(containerEl)
+			.setName("统计月份启用类型组输出")
+			.setDesc("开启后使用类型组进行输出")
+			.addToggle(t=>{
+				t.setValue(this.plugin.settings.open_zu_output)
+					.onChange(p=>{
+						this.plugin.settings.open_zu_output=p;
+						this.plugin.saveSettings()
+					})
+			})
 		let random_choose_input=''
 		new Setting(containerEl)
 			.setName("随机选择")
@@ -191,12 +242,20 @@ export class MySetting extends PluginSettingTab {
 	}
 
 }
-function render_list(con:any,type:string[],fn:(l:string,set?:any)=>void) {
+function render_list(con:any,type:string[],fn:(l:string,set?:any)=>void,group_child_add:(type:string)=>void) {
 	type.forEach((i)=>{
 		const setting=new Setting(con)
 			.setName(i)
-
 			.addButton(btn=>{
+				btn.setIcon('plus')
+					.buttonEl.id=i;
+					btn.buttonEl.classList.add('group_add')
+				btn.buttonEl.classList.add('group_o')
+						btn.onClick(()=>{
+							group_child_add(i);
+						})
+			})
+			.addExtraButton(btn=>{
 				btn.setIcon('trash-2')
 					.onClick(()=>{
 						fn(i,setting);
@@ -285,3 +344,70 @@ function calcRandom(value:Record<string,number>):Record<string,number> {
 
 	return res
 }
+function render_oneGroup(con:HTMLElement,name:string,child:string[],on_choose:(name:string)=>void,n_delete:(name:string)=>void,c_delete:(name:string,child:string)=>void) {
+	let is_open:boolean=false
+	let is_set:boolean=false
+	const set=new Setting(con)
+		.setName(name)
+		.setHeading()
+		.addButton(b=>{
+			b.setIcon('bolt')
+				.onClick(()=>{
+					is_set=!is_set
+					if (is_set){
+						b.setIcon('cog')
+						group_setting(con);
+						on_choose(name)
+					}else {
+						b.setIcon('bolt')
+						group_no_set(con);
+					}
+					
+				})
+		})
+		.addButton(b=>{
+			b.setIcon('trash-2')
+				.onClick(()=>{
+					n_delete(name);
+				})
+		})
+		.addExtraButton(p=>{
+			p.setIcon('chevron-down')
+			p.onClick(()=> {
+				is_open = !is_open;
+				if (is_open) {
+					dic.style.display = 'none'
+					p.setIcon('chevron-right')
+				} else {
+					dic.style.display = 'block'
+					p.setIcon('chevron-down')
+				}
+			})
+		})
+
+	const dic=con.createDiv()
+	for (const i of child){
+		new Setting(dic)
+			.setName(i)
+			.addExtraButton(btn=>{
+				btn.setIcon('trash-2')
+					.onClick(()=>{
+						c_delete(name,i);
+					})
+			})
+	}
+}
+function group_setting(con:HTMLElement) {
+	let all = con.querySelectorAll('button.group_add');
+	all.forEach(e=>{
+		e.classList.remove('group_add')
+	})
+
+}
+function group_no_set(con:HTMLElement) {
+	let all = con.querySelectorAll('button.group_o');
+	all.forEach(e=>{
+		e.classList.add('group_add')
+	})
+}
+
