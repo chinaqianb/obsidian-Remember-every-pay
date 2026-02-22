@@ -11,7 +11,8 @@ export interface MyPluginSettings {
 	random_choose_zu:Record<string,Record<string,number>>
 	random_choose_time_and_n:[number,number]
 	record_zu:Record<string, string[]>
-	open_zu_output:boolean
+	open_zu_output:string
+
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -23,7 +24,7 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
 	random_choose_time_and_n:[500,4],
 	data_zero_output:false,
 	record_zu:{},
-	open_zu_output:false
+	open_zu_output:"mix"
 }
 
 export class MySetting extends PluginSettingTab {
@@ -193,15 +194,18 @@ export class MySetting extends PluginSettingTab {
 					})
 			})
 		new Setting(containerEl)
-			.setName("统计月份启用类型组输出")
-			.setDesc("开启后使用类型组进行输出")
-			.addToggle(t=>{
-				t.setValue(this.plugin.settings.open_zu_output)
-					.onChange(p=>{
-						this.plugin.settings.open_zu_output=p;
+			.setName("统计月份输出方式")
+			.addDropdown(drop=>{
+				drop.addOption('normal',"仅单条类型输出")
+					.addOption('zu','仅通过类型组输出')
+					.addOption('mix','单条和类型组混合输出')
+					.setValue(this.plugin.settings.open_zu_output)
+					.onChange(value => {
+						this.plugin.settings.open_zu_output=value
 						this.plugin.saveSettings()
 					})
 			})
+
 		let random_choose_input=''
 		new Setting(containerEl)
 			.setName("随机选择")
