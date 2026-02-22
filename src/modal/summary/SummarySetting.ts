@@ -179,7 +179,7 @@ export default class SummarySetting extends Modal{
 								need_cut_.remove(btn)
 								this.last_all_data.set(e, Number(one_num))
 							}
-							this.reload_zu_result(this.now_choose_zu)
+							this.reload_zu_result()
 							// if (!is_in_zu) {
 							// 	//移入
 							// 	now_choose_zu.appendChild(one.settingEl)
@@ -222,11 +222,11 @@ export default class SummarySetting extends Modal{
 							this.get[e] = value
 							if ((one.settingEl.parentElement as HTMLElement) != normal_list) {
 								if (value) {
-									(<Record<string, number>>this.zu_data[(<HTMLDivElement>this.now_choose_zu).id])[e] = Number(one_num)
+									(<Record<string, number>>this.zu_data[(one.settingEl.parentElement as Element).id])[e] = Number(one_num)
 								} else {
-									delete (<Record<string, number>>this.zu_data[(<HTMLDivElement>this.now_choose_zu).id])[e]
+									delete (<Record<string, number>>this.zu_data[(one.settingEl.parentElement as Element).id])[e]
 								}
-								this.reload_zu_result(<HTMLDivElement>this.now_choose_zu)
+								this.reload_zu_result()
 							} else {
 								if (value) {
 									this.last_all_data.set(e, Number(one_num))
@@ -255,6 +255,7 @@ export default class SummarySetting extends Modal{
 				}
 
 			});
+		}
 			//渲染子元素
 			for (const [fu,uk] of Object.entries(this.init_zu_child)){
 				this.now_choose_zu=this.contentEl.querySelector("#"+fu);
@@ -262,7 +263,7 @@ export default class SummarySetting extends Modal{
 				{
 
 					const one_num= io.putUpNum(Number(data.get(you)));
-					(<Record<string, number>>this.zu_data[a])[you] = Number(one_num)
+					(<Record<string, number>>this.zu_data[fu])[you] = Number(one_num)
 					const one=this.contentEl.querySelector("#"+you)as Element
 					this.now_choose_zu?.appendChild(one)
 					btn.setIcon("minus")
@@ -271,8 +272,8 @@ export default class SummarySetting extends Modal{
 				}
 			}
 
-	}
 
+		this.reload_zu_result()
 		const check=this.addMixCheck();
 
 	}
@@ -406,16 +407,20 @@ export default class SummarySetting extends Modal{
 
 		return dic
 	}
-	reload_zu_result(div:HTMLDivElement){
-		const li = this.all_zu[div.id]as Setting
-		for (const [k,v] of Object.entries(this.zu_data)){
-			if (k===div.id){
-				const out=this.calc_zu_result(v)
-				if (Number(out)===0){return;}
+	reload_zu_result() {
+		for (const [op, li] of Object.entries(this.all_zu)) {
+		for (const [k, v] of Object.entries(this.zu_data)) {
+			if (k === op) {
+				const out = this.calc_zu_result(v)
+				if (Number(out) === 0) {
+					li.setDesc("")
+					return;
+				}
 				li.setDesc(out)
-				this.last_all_data.set(div.id,Number(out))
+				this.last_all_data.set(op, Number(out))
 			}
 		}
+	}
 
 	}
 	calc_zu_result(child:Record<string, number>):string {
