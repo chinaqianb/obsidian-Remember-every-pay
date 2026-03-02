@@ -96,6 +96,7 @@ export default class SummarySetting extends Modal{
 								new_back.delete(k)
 							}
 						}
+						await io.summaryMonthData(this.plugin,this.path,this.plugin.settings.data_zero_output)
 						await io.addCharts(new_back, this.path, this.chart_type)
 						this.close()
 					})
@@ -302,6 +303,8 @@ export default class SummarySetting extends Modal{
 				b.setIcon('check')
 					.onClick(async ()=>{
 						const io=new RecordDataIo(this.app,this.plugin)
+						//统计数据
+						await io.summaryMonthData(this.plugin,this.path,this.plugin.settings.data_zero_output)
 						await io.addCharts(this.last_all_data,this.path,this.chart_type);
 						this.close()
 					})
