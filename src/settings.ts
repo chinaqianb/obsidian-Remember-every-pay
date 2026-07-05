@@ -72,7 +72,14 @@ export class MySetting extends PluginSettingTab {
 			.setHeading()
 			.addExtraButton((btn)=>{
 				btn.setIcon('chevron-down')
-					.onClick(()=>{
+				setTimeout(()=> {
+					if (this.plugin.settings.my_record.length > 3) {
+						all_type_area.style.display = 'none';
+						btn.setIcon('chevron-right')
+						this.isc=true
+					}
+				})
+					btn.onClick(()=>{
 						this.isc=!this.isc
 						if (this.isc){
 							all_type_area.style.display='none'
@@ -291,7 +298,14 @@ function renderRandomZu(con:HTMLElement,type:Record<string, Record<string,number
 					})
 			})
 			.addExtraButton(p=>{
-				p.setIcon('chevron-down')
+				setTimeout(()=> {
+					p.setIcon('chevron-down')
+					if (Object.entries(one).length >= 3) {
+						dic.style.display = 'none';
+						p.setIcon('chevron-right');
+						is_open = true
+					}
+				})
 				p.onClick(()=> {
 					is_open = !is_open;
 					if (is_open) {
@@ -376,7 +390,14 @@ function render_oneGroup(con:HTMLElement,name:string,child:string[],on_choose:(n
 				})
 		})
 		.addExtraButton(p=>{
+			setTimeout(()=>{
 			p.setIcon('chevron-down')
+			if (child.length>=3) {
+				dic.style.display = 'none';
+				p.setIcon('chevron-right');
+				is_open = true
+			}
+		})
 			p.onClick(()=> {
 				is_open = !is_open;
 				if (is_open) {

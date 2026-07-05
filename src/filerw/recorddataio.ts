@@ -62,10 +62,10 @@ export default class RecordDataIo {
 	}
 	getAllFile_Name_and_Path_List():Record<string, string>{
 		let res:Record<string, string>={}
-		let files = this.app.vault.getFiles();
+		let files = this.app.vault.getFiles()
+		const regex=new FileFormatSet(this.plugin.settings.file_sava_way).dateToMatch()
 		for (const file of files){
-			const par=/(\d{4}-\d{2})/
-			if (file.name.match(par)){
+			if (file.path.match(regex)){
 				res[file.name]=file.path
 			}
 		}
@@ -457,6 +457,10 @@ export default class RecordDataIo {
 		let pay_list=Array.from(type.values())
 		const type_out=`[${type_list.join(',')}]`
 		const pay_out=`[${pay_list.join(',')}]`
+		let is_color="false"
+		if (chart_type==='pie'||chart_type==='doughnut'||chart_type==='polarArea'){
+			is_color="true"
+		}
 		 const chart=`
 \`\`\`chart
 type: ${chart_type}
@@ -466,7 +470,7 @@ series:
    data: ${pay_out}
 tension: 0.13
 width: 80%
-labelColors: false
+labelColors: ${is_color}
 fill: true
 beginAtZero: false
 bestFit: false
