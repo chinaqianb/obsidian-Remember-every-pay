@@ -3,7 +3,7 @@
 ## Project overview
 
 - Target: Obsidian Community Plugin (TypeScript → bundled JavaScript).
-- Entry point: `main.ts` compiled to `main.js` and loaded by Obsidian.
+- Entry point: `RememberEveryPay.ts` compiled to `main.js` and loaded by Obsidian.
 - Required release artifacts: `main.js`, `manifest.json`, and optional `styles.css`.
 
 ## Environment & tooling
@@ -36,19 +36,19 @@ npm run build
 ## Linting
 
 - To use eslint install eslint from terminal: `npm install -g eslint`
-- To use eslint to analyze this project use this command: `eslint main.ts`
+- To use eslint to analyze this project use this command: `eslint RememberEveryPay.ts`
 - eslint will then create a report with suggestions for code improvement by file and line number.
 - If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder: `eslint ./src/`
 
 ## File & folder conventions
 
-- **Organize code into multiple files**: Split functionality across separate modules rather than putting everything in `main.ts`.
-- Source lives in `src/`. Keep `main.ts` small and focused on plugin lifecycle (loading, unloading, registering commands).
+- **Organize code into multiple files**: Split functionality across separate modules rather than putting everything in `RememberEveryPay.ts`.
+- Source lives in `src/`. Keep `RememberEveryPay.ts` small and focused on plugin lifecycle (loading, unloading, registering commands).
 - **Example file structure**:
   ```
   src/
-    main.ts           # Plugin entry point, lifecycle management
-    settings.ts       # Settings interface and defaults
+    RememberEveryPay.ts           # Plugin entry point, lifecycle management
+    RememberEveryPaySettings.ts       # Settings interface and defaults
     commands/         # Command implementations
       command1.ts
       command2.ts
@@ -131,7 +131,7 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 ## Coding conventions
 
 - TypeScript with `"strict": true` preferred.
-- **Keep `main.ts` minimal**: Focus only on plugin lifecycle (onload, onunload, addCommand calls). Delegate all feature logic to separate modules.
+- **Keep `RememberEveryPay.ts` minimal**: Focus only on plugin lifecycle (onload, onunload, addCommand calls). Delegate all feature logic to separate modules.
 - **Split large files**: If any file exceeds ~200-300 lines, consider breaking it into smaller, focused modules.
 - **Use clear module boundaries**: Each file should have a single, well-defined responsibility.
 - Bundle everything into `main.js` (no unbundled runtime deps).
@@ -161,7 +161,7 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 
 ### Organize code across multiple files
 
-**main.ts** (minimal, lifecycle only):
+**RememberEveryPay.ts** (minimal, lifecycle only):
 ```ts
 import { Plugin } from "obsidian";
 import { MySettings, DEFAULT_SETTINGS } from "./settings";
@@ -177,7 +177,7 @@ export default class MyPlugin extends Plugin {
 }
 ```
 
-**settings.ts**:
+**RememberEveryPaySettings.ts**:
 ```ts
 export interface MySettings {
   enabled: boolean;

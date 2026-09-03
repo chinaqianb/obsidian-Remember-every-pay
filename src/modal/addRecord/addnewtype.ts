@@ -1,10 +1,10 @@
 import {App, Modal, Notice, Setting} from "obsidian"
 import ChooseModel from "./choosemodel";
-import MyPlugin from "../../main";
+import RememberEveryPay from "../../RememberEveryPay";
 
 export default class addNewType extends Modal{
-	private plugin:MyPlugin
-	constructor(app:App,plugin:MyPlugin) {
+	private plugin:RememberEveryPay
+	constructor(app:App,plugin:RememberEveryPay) {
 		super(app);
 		this.plugin=plugin;
 		let input=''

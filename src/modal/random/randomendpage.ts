@@ -11,12 +11,14 @@ export default class RandomEndPage extends Modal{
 		const { contentEl } = this;
 
 		contentEl.empty();
-		contentEl.style.minHeight = '200px';
-		contentEl.style.display = 'flex';
-		contentEl.style.flexDirection = 'column';
-		contentEl.style.justifyContent = 'center';
-		contentEl.style.alignItems = 'center';
-		contentEl.style.textAlign = 'center';
+		contentEl.setCssStyles({minHeight : '200px'})
+		contentEl.setCssStyles({display : 'flex'})
+		contentEl.setCssStyles({flexDirection : 'column'})
+		contentEl.setCssStyles({justifyContent : 'center'})
+		contentEl.setCssStyles({alignItems : 'center'})
+		contentEl.setCssStyles({textAlign :'center'})
+
+
 		contentEl.setText(`结果是:${handle_random(this.d)}`)
 	}
 }

@@ -1,13 +1,13 @@
 import {App, Modal, moment, Notice, Setting} from "obsidian";
 import RecordDataIo, {ThirdM} from "../../filerw/recorddataio";
-import MyPlugin from "../../main";
+import RememberEveryPay from "../../RememberEveryPay";
 export interface SecondM{
 	type:string
 }
 export default class InputPayModel extends Modal{
 private static last:number=0
-	plugin:MyPlugin
-	constructor(app:App,plugin:MyPlugin,m:SecondM,date:string='o',path:string='o') {
+	plugin:RememberEveryPay
+	constructor(app:App, plugin:RememberEveryPay, m:SecondM, date:string='o', path:string='o') {
 		super(app);
 		this.plugin=plugin
 		let mon:number|string;

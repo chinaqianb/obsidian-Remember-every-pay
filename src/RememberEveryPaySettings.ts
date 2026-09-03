@@ -1,5 +1,5 @@
-import {App, moment, Notice, PluginSettingTab, Setting} from "obsidian";
-import MyPlugin from "./main";
+import {App, moment, Notice, PluginSettingTab, Setting, SettingDefinitionItem} from "obsidian";
+import RememberEveryPay from "./RememberEveryPay";
 import FileFormatSet from "./filerw/fileformatset";
 
 export interface MyPluginSettings {
@@ -27,14 +27,16 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
 	open_zu_output:"mix"
 }
 
-export class MySetting extends PluginSettingTab {
-	plugin: MyPlugin;
+export class RememberEveryPaySettings extends PluginSettingTab {
+	plugin: RememberEveryPay;
 	private isc=false;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: RememberEveryPay) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
+
+
 
 	display(): void {
 		const {containerEl} = this;
@@ -72,9 +74,9 @@ export class MySetting extends PluginSettingTab {
 			.setHeading()
 			.addExtraButton((btn)=>{
 				btn.setIcon('chevron-down')
-				setTimeout(()=> {
+				window.setTimeout(()=> {
 					if (this.plugin.settings.my_record.length > 3) {
-						all_type_area.style.display = 'none';
+						all_type_area.setCssStyles({display:'none'})
 						btn.setIcon('chevron-right')
 						this.isc=true
 					}
@@ -82,10 +84,10 @@ export class MySetting extends PluginSettingTab {
 					btn.onClick(()=>{
 						this.isc=!this.isc
 						if (this.isc){
-							all_type_area.style.display='none'
+							all_type_area.setCssStyles({display:'none'})
 							btn.setIcon('chevron-right')
 						}else {
-							all_type_area.style.display='block'
+							all_type_area.setCssStyles({display:'block'})
 							btn.setIcon('chevron-down')
 						}
 					})
@@ -137,7 +139,7 @@ export class MySetting extends PluginSettingTab {
 			.setName("文件操作")
 			.setHeading()
 		function set_way_text(fn:()=>string):DocumentFragment{
-			const file_way_dec=document.createDocumentFragment();
+			const file_way_dec=activeDocument.createDocumentFragment();
 			file_way_dec.appendText("设置创建文件的路径方式")
 			file_way_dec.createEl('br')
 			file_way_dec.appendText("现在的文件夹路径如下:")
@@ -301,7 +303,7 @@ function renderRandomZu(con:HTMLElement,type:Record<string, Record<string,number
 				setTimeout(()=> {
 					p.setIcon('chevron-down')
 					if (Object.entries(one).length >= 3) {
-						dic.style.display = 'none';
+						dic.setCssStyles({display:'none'})
 						p.setIcon('chevron-right');
 						is_open = true
 					}
@@ -309,10 +311,10 @@ function renderRandomZu(con:HTMLElement,type:Record<string, Record<string,number
 				p.onClick(()=> {
 					is_open = !is_open;
 					if (is_open) {
-						dic.style.display = 'none'
+						dic.setCssStyles({display:'none'})
 						p.setIcon('chevron-right')
 					} else {
-						dic.style.display = 'block'
+						dic.setCssStyles({display:'block'})
 						p.setIcon('chevron-down')
 					}
 				})
@@ -390,10 +392,10 @@ function render_oneGroup(con:HTMLElement,name:string,child:string[],on_choose:(n
 				})
 		})
 		.addExtraButton(p=>{
-			setTimeout(()=>{
+			window.setTimeout(()=>{
 			p.setIcon('chevron-down')
 			if (child.length>=3) {
-				dic.style.display = 'none';
+				dic.setCssStyles({display:'none'})
 				p.setIcon('chevron-right');
 				is_open = true
 			}
@@ -401,10 +403,10 @@ function render_oneGroup(con:HTMLElement,name:string,child:string[],on_choose:(n
 			p.onClick(()=> {
 				is_open = !is_open;
 				if (is_open) {
-					dic.style.display = 'none'
+					dic.setCssStyles({display:'none'})
 					p.setIcon('chevron-right')
 				} else {
-					dic.style.display = 'block'
+					dic.setCssStyles({display:'block'})
 					p.setIcon('chevron-down')
 				}
 			})

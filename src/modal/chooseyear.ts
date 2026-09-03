@@ -1,12 +1,12 @@
 import {App, SuggestModal} from "obsidian";
-import MyPlugin from "../main";
+import RememberEveryPay from "../RememberEveryPay";
 import RecordDataIo from "../filerw/recorddataio";
 
 export default class ChooseYear extends SuggestModal<string>{
 	file:Record<string, string>
-	plugin:MyPlugin
+	plugin:RememberEveryPay
 	fn:(value:string)=>void
-	constructor(app:App,plugin:MyPlugin,fn:(value:string)=>void) {
+	constructor(app:App, plugin:RememberEveryPay, fn:(value:string)=>void) {
 		super(app);
 		this.fn=fn
 		this.plugin=plugin

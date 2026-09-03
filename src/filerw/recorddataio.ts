@@ -1,5 +1,5 @@
 import {App, moment, Notice, TFile} from "obsidian";
-import MyPlugin from "../main";
+import RememberEveryPay from "../RememberEveryPay";
 import FileFormatSet from "./fileformatset";
 
 export interface ThirdM {
@@ -8,8 +8,8 @@ export interface ThirdM {
 }
 export default class RecordDataIo {
 	 app:App
-	plugin:MyPlugin
-	constructor(app:App,plugin:MyPlugin) {
+	plugin:RememberEveryPay
+	constructor(app:App,plugin:RememberEveryPay) {
 	this.app=app
 		this.plugin=plugin
 	}
@@ -23,8 +23,7 @@ export default class RecordDataIo {
 			if (!is_exi) {
 				await this.app.vault.createFolder(file_name);
 			}
-			const now_name = format.getFileFolder()[1]
-			// const now_path = `${file_name}/${now_name}`
+
 			if (!await this.app.vault.adapter.exists(now_path)) {
 				const file = await this.app.vault.create(now_path, data)
 				await this.app.workspace.getLeaf(true).openFile(file);
@@ -33,6 +32,7 @@ export default class RecordDataIo {
 			new Notice("创建失败:" + err)
 		}
 	}
+
 	 getAllFilepathList():string[]{
 		let result:string[]=[]
 		 try {
@@ -349,10 +349,9 @@ export default class RecordDataIo {
 		}
 		return pair
 	}
-	async summaryBackData(plugin:MyPlugin,path:string):Promise<Map<string,number>>{
+	async summaryBackData(plugin:RememberEveryPay, path:string):Promise<Map<string,number>>{
 		const con=await this.readThatDateMd(path)as string;
 		const block:string[]=this.dataToBlock(con)
-		const toMonth=moment().format('YYYY-MM-DD')
 		let collect_map:Map<string,number>=new Map<string, number>();
 		plugin.settings.my_record.forEach((i)=>{
 			collect_map.set(i,0)
@@ -384,7 +383,7 @@ export default class RecordDataIo {
 		})
 		return collect_map
 	}
-	async summaryMonthData(plugin:MyPlugin,path:string,zero_output:boolean,all_pay=true):Promise<Map<string, number>>{
+	async summaryMonthData(plugin:RememberEveryPay, path:string, zero_output:boolean, all_pay=true):Promise<Map<string, number>>{
 		let collect_map= await this.summaryBackData(plugin,path)
 		const con=await this.readThatDateMd(path)as string;
 		//new Notice(`蜜雪:${collect_map.get("蜜雪")}`)
@@ -412,7 +411,7 @@ export default class RecordDataIo {
 	 * @param plugin
 	 * @param path
 	 */
-	async summaryAllPay(plugin:MyPlugin,path:string):Promise<number>{
+	async summaryAllPay(plugin:RememberEveryPay, path:string):Promise<number>{
 		 let map = await this.summaryBackData(plugin,path);
 		 let sum=0;
 		 for (const [,value] of map.entries()){
@@ -431,7 +430,7 @@ export default class RecordDataIo {
 		 const con=await this.readThatDateMd(path)
 		 const data= await this.findDateBack(date, path)
 		let sum:number=0
-		for (const [k,v] of data){
+		for (const [,v] of data){
 
 			sum+=v
 		}

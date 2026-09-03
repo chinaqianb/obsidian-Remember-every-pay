@@ -1,9 +1,9 @@
 import {App, ButtonComponent, Modal, Notice, Setting} from "obsidian";
-import MyPlugin from "../../main";
+import RememberEveryPay from "../../RememberEveryPay";
 import RecordDataIo from "../../filerw/recorddataio";
 
 export default class SummarySetting extends Modal{
-	plugin:MyPlugin
+	plugin:RememberEveryPay
 	get:Record<string, boolean>={}
 	path:string
 	chart_type='radar'
@@ -12,7 +12,7 @@ export default class SummarySetting extends Modal{
 	last_all_data:Map<string,number>=new Map<string, number>()
 	now_choose_zu:HTMLDivElement|null=null;
 	init_zu_child:Record<string, Record<string, ButtonComponent> >={}
-	constructor(app:App,plugin:MyPlugin,path:string) {
+	constructor(app:App, plugin:RememberEveryPay, path:string) {
 		super(app);
 		this.plugin=plugin
 		this.path=path
@@ -368,10 +368,10 @@ export default class SummarySetting extends Modal{
 				p.onClick(()=> {  // 添加点击事件
 					is_open = !is_open;  // 切换展开状态
 					if (is_open) {
-						dic.style.display = 'none'  // 隐藏内容
+						dic.setCssStyles({display:'none'})// 隐藏内容
 						p.setIcon('chevron-right')  // 更改图标
 					} else {
-						dic.style.display = 'block'  // 显示内容
+						dic.setCssStyles({display:'block'})// 显示内容
 						p.setIcon('chevron-down')  // 恢复图标
 					}
 				})
@@ -415,10 +415,7 @@ export default class SummarySetting extends Modal{
 		for (const [k, v] of Object.entries(this.zu_data)) {
 			if (k === op) {
 				const out = this.calc_zu_result(v)
-				if (Number(out) === 0) {
-					li.setDesc("")
-					return;
-				}
+
 				li.setDesc(out)
 				this.last_all_data.set(op, Number(out))
 			}

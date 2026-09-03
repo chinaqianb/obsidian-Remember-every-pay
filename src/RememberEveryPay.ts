@@ -1,5 +1,5 @@
 import {App, Editor, MarkdownView, Menu, Modal, Notice, Plugin} from 'obsidian';
-import {DEFAULT_SETTINGS, MyPluginSettings, MySetting} from "./settings";
+import {DEFAULT_SETTINGS, MyPluginSettings, RememberEveryPaySettings} from "./RememberEveryPaySettings";
 import ChooseModel from "./modal/addRecord/choosemodel";
 import RecordDataIo from "./filerw/recorddataio";
 import RandomChoose from "./modal/random/randomchoose";
@@ -13,7 +13,7 @@ import SummarySetting from "./modal/summary/SummarySetting";
 
 
 
-export default class MyPlugin extends Plugin {
+export default class RememberEveryPay extends Plugin {
 	settings: MyPluginSettings;
 
 	async onload() {
@@ -102,20 +102,18 @@ export default class MyPlugin extends Plugin {
 			}
 		});
 
-		this.addCommand({
-			id:'test-the-use',
-			name:'测试这个功能',
-			callback:()=>{
-				// new RecordDataIo(this.app,this).getAllFileList()
-			}
-		})
+		// this.addCommand({
+		// 	id:'test-the-use',
+		// 	name:'测试这个功能',
+		// 	callback:()=>{
+		// 		// new RecordDataIo(this.app,this).getAllFileList()
+		// 	}
+		// })
 
-		this.addSettingTab(new MySetting(this.app, this));
+		this.addSettingTab(new RememberEveryPaySettings(this.app, this));
 
 
 
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 
 	}
 

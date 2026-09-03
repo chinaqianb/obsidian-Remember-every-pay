@@ -1,13 +1,13 @@
 import {App, moment, SuggestModal} from "obsidian";
-import MyPlugin from "../../main";
+import RememberEveryPay from "../../RememberEveryPay";
 import DeleteRecord from "./deleteRecord";
 import RecordDataIo from "../../filerw/recorddataio";
 
 export default class ChooseRecordData extends SuggestModal<string>{
 	date:string[]
-	plugin:MyPlugin
+	plugin:RememberEveryPay
 	path:string
-	constructor(app:App,plugin:MyPlugin,date:string[],path:string) {
+	constructor(app:App, plugin:RememberEveryPay, date:string[], path:string) {
 		super(app);
 		this.date=moveToFirst(date,moment().format('YYYY-MM-DD'))
 		this.plugin=plugin

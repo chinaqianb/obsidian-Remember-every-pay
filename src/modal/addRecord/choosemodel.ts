@@ -1,6 +1,6 @@
 import {App, Notice, Setting, SuggestModal} from "obsidian";
 import addNewType from "./addnewtype";
-import MyPlugin from "../../main";
+import RememberEveryPay from "../../RememberEveryPay";
 import InputPayModel, {SecondM} from "./inputpaymodel";
 
 export interface MyType{
@@ -8,10 +8,10 @@ export interface MyType{
 }
 export default class ChooseModel extends SuggestModal<MyType>{
 
-	private plugin:MyPlugin
+	private plugin:RememberEveryPay
 	date:string
 	path:string
-	constructor(app:App,plugin:MyPlugin,date:string='o',path:string='o') {
+	constructor(app:App, plugin:RememberEveryPay, date:string='o', path:string='o') {
 		super(app);
 		this.date=date
 		this.path=path

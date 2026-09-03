@@ -1,16 +1,16 @@
 import {App, Notice, setIcon, SuggestModal} from "obsidian";
 import RecordDataIo from "../../filerw/recorddataio";
-import MyPlugin from "../../main";
+import RememberEveryPay from "../../RememberEveryPay";
 interface DateOneData {
 	type:string
 	value:string
 }
 export default class DeleteRecord extends SuggestModal<DateOneData>{
 	data:DateOneData[]=[]
-	plugin:MyPlugin
+	plugin:RememberEveryPay
 	choose:string
 	path:string
-	constructor(app:App,plugin:MyPlugin,choose:string,data:[string,number][],path:string) {
+	constructor(app:App, plugin:RememberEveryPay, choose:string, data:[string,number][], path:string) {
 		super(app);
 		this.plugin=plugin
 		this.choose=choose
@@ -24,9 +24,11 @@ export default class DeleteRecord extends SuggestModal<DateOneData>{
     }
     renderSuggestion(value: DateOneData, el: HTMLElement): void {
 		const div=el.createDiv({text:`${value.type}-${value.value}`})
-		div.style.display='flex'
-		div.style.justifyContent='space-between'
-		div.style.alignItems='center'
+
+		div.setCssStyles({display:'flex'})
+		div.setCssStyles({justifyContent:'space-between'})
+		div.setCssStyles({alignItems:'center'})
+
 
       const btn=div.createEl('button')
 		setIcon(btn,'trash-2')

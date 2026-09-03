@@ -1,7 +1,5 @@
 import {App, Modal, setIcon, Setting, SuggestModal} from "obsidian";
-import {it} from "node:test";
-import {text} from "node:stream/consumers";
-import MyPlugin from "../../main";
+import RememberEveryPay from "../../RememberEveryPay";
 import RecordDataIo from "../../filerw/recorddataio";
 import ChooseModel from "../addRecord/choosemodel";
 interface orData {
@@ -11,9 +9,9 @@ interface orData {
 export default class FindOrWriteData extends SuggestModal<orData>{
 	data:orData[]=[{type:"增加新的记录",value:''}]
 	choose_date:string
-	plugin:MyPlugin
+	plugin:RememberEveryPay
 	path:string
-	constructor(app:App,plugin:MyPlugin,choose:string,date:[string,number][],path:string) {
+	constructor(app:App, plugin:RememberEveryPay, choose:string, date:[string,number][], path:string) {
 		super(app);
 		this.plugin=plugin
 		for (const [k,v]of date){
@@ -44,7 +42,7 @@ export default class FindOrWriteData extends SuggestModal<orData>{
 	// }
 }
 export class WriteAndTurnData extends Modal{
-	constructor(app:App,type:string,value:string,plugin:MyPlugin,choose:string,path:string) {
+	constructor(app:App, type:string, value:string, plugin:RememberEveryPay, choose:string, path:string) {
 		super(app);
 		let data:[string,string]=[type,value]
 		new Setting(this.contentEl)

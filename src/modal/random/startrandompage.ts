@@ -33,27 +33,33 @@ export default class RandomPage extends Modal{
 		setIcon(iconContainer, 'dice-6');
 
 		// 添加样式让图标更大更显眼
-		iconContainer.style.setProperty('--icon-size', '80px')
-		iconContainer.style.cursor = 'pointer';
-		iconContainer.style.padding = '20px';
-		iconContainer.style.borderRadius = '15px';
-		iconContainer.style.backgroundColor = 'var(--background-modifier-hover)';
-		//iconContainer.style.marginBottom = '20px';
-		iconContainer.style.height='100px'
-		iconContainer.style.width='100px'
-		iconContainer.style.display='flex'
-		iconContainer.style.justifySelf='center'
-		iconContainer.style.alignItems='center'
+		iconContainer.setCssProps({'--icon-size':'80px'})
+		iconContainer.setCssStyles({cursor : 'pointer'})
+		iconContainer.setCssStyles({padding : '20px'})
+		iconContainer.setCssStyles({borderRadius : '15px'})
+		iconContainer.setCssStyles({backgroundColor:'var(--background-modifier-hover)'})
+		iconContainer.setCssStyles({height:'100px'})
+		iconContainer.setCssStyles({width:'100px'})
+		iconContainer.setCssStyles({display:'flex'})
+		iconContainer.setCssStyles({justifySelf:'center'})
+		iconContainer.setCssStyles({alignItems:'center'})
+
+
+
 
 		// 添加悬停效果
 		iconContainer.addEventListener('mouseenter', () => {
-			iconContainer.style.backgroundColor = 'var(--background-modifier-active-hover)';
-			iconContainer.style.transform = 'scale(1.1)';
+			iconContainer.setCssStyles({backgroundColor : 'var(--background-modifier-active-hover)'})
+			iconContainer.setCssStyles({transform : 'scale(1.1)'})
+
+
 		});
 
 		iconContainer.addEventListener('mouseleave', () => {
-			iconContainer.style.backgroundColor = 'var(--background-modifier-hover)';
-			iconContainer.style.transform = 'scale(1)';
+			iconContainer.setCssStyles({backgroundColor : 'var(--background-modifier-hover)'})
+			iconContainer.setCssStyles({transform:'scale(1)'})
+
+
 		});
 
 		// 添加点击事件
