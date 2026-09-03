@@ -1,4 +1,4 @@
-# obsidian-Remember-every-pay
+# obsidian-Remember-every-pay [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/chinaqianb/obsidian-Remember-every-pay)](https://github.com/chinaqianb/obsidian-Remember-every-pay/releases)
 ## English
 This is by use yourself to record every money you pay in life of obsidian plugin,it will record every pay in md files,support find,write,and delete wrong record,also support every month summary(need [Charts](https://github.com/phibr0/obsidian-charts) plugin)
 ## 中文
