@@ -1,5 +1,5 @@
 import {App, Editor, MarkdownView, Menu, Modal, Notice, Plugin} from 'obsidian';
-import {DEFAULT_SETTINGS, MyPluginSettings, RememberEveryPaySettings} from "./RememberEveryPaySettings";
+import {DEFAULT_SETTINGS, RememberEveryPaySetting, RememberEveryPaySettings} from "./RememberEveryPaySettings";
 import ChooseModel from "./modal/addRecord/choosemodel";
 import RecordDataIo from "./filerw/recorddataio";
 import RandomChoose from "./modal/random/randomchoose";
@@ -14,7 +14,7 @@ import SummarySetting from "./modal/summary/SummarySetting";
 
 
 export default class RememberEveryPay extends Plugin {
-	settings: MyPluginSettings;
+	settings: RememberEveryPaySetting;
 
 	async onload() {
 		await this.loadSettings();
@@ -121,7 +121,7 @@ export default class RememberEveryPay extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<MyPluginSettings>);
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<RememberEveryPaySetting>);
 	}
 
 	async saveSettings() {

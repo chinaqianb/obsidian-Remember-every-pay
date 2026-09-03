@@ -2,7 +2,7 @@ import {App, moment, Notice, PluginSettingTab, Setting, SettingDefinitionItem} f
 import RememberEveryPay from "./RememberEveryPay";
 import FileFormatSet from "./filerw/fileformatset";
 
-export interface MyPluginSettings {
+export interface RememberEveryPaySetting {
 	my_record:string[]
 	file_sava_way:string
 	every_data_hang_out:boolean
@@ -15,7 +15,7 @@ export interface MyPluginSettings {
 
 }
 
-export const DEFAULT_SETTINGS: MyPluginSettings = {
+export const DEFAULT_SETTINGS: RememberEveryPaySetting = {
 	my_record:[],
 	file_sava_way:`\${YYYY}/\${YYYY-MM}.md`,
 	every_data_hang_out:false,
@@ -55,6 +55,7 @@ export class RememberEveryPaySettings extends PluginSettingTab {
 					})
 
 			}).addExtraButton(btn=>{
+
 				btn.setIcon('plus')
 					.onClick(async ()=>{
 						if (add_value===''){

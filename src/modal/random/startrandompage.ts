@@ -17,12 +17,14 @@ export default class RandomPage extends Modal{
 		contentEl.empty();
 
 		// 设置模态框的最小尺寸
-		contentEl.style.minHeight = '200px';
-		contentEl.style.display = 'flex';
-		contentEl.style.flexDirection = 'column';
-		contentEl.style.justifyContent = 'center';
-		contentEl.style.alignItems = 'center';
-		contentEl.style.textAlign = 'center';
+		contentEl.setCssStyles({minHeight : '200px'})
+		contentEl.setCssStyles({display : 'flex'})
+		contentEl.setCssStyles({flexDirection : 'column'})
+		contentEl.setCssStyles({justifyContent : 'center'})
+		contentEl.setCssStyles({alignItems : 'center'})
+		contentEl.setCssStyles({textAlign : 'center'})
+
+
 
 		// 创建图标容器
 		const iconContainer = contentEl.createDiv({
